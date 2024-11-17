@@ -7,6 +7,15 @@ const mongoose = require('mongoose'); // Add Mongoose for MongoDB connection
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:<db_password>@cluster0.bjz0r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 
+//defining a schema & data model
+const movieSchema = new mongoose.Schema({
+  title: String,
+  year: String,
+  poster: String
+});
+
+const Movie = mongoose.model('Movie', movieSchema);
+
 const cors = require('cors'); 
 app.use(cors()); 
 
