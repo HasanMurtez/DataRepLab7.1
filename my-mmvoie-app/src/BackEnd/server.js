@@ -7,17 +7,17 @@ const mongoose = require('mongoose'); // Add Mongoose for MongoDB connection
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://admin:<db_password>@cluster0.bjz0r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 
-//defining a schema & data model
+// Defining a schema and data model for movies
 const movieSchema = new mongoose.Schema({
   title: String,
   year: String,
-  poster: String
+  poster: String,
 });
 
 const Movie = mongoose.model('Movie', movieSchema);
 
-const cors = require('cors'); 
-app.use(cors()); 
+const cors = require('cors');
+app.use(cors()); // Enable CORS for all routes
 
 // Middleware to handle CORS headers explicitly
 app.use(function(req, res, next) {
@@ -31,41 +31,43 @@ const bodyParser = require('body-parser'); // Importing body-parser for parsing 
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON bodies
 
-// GET route to return a list of movies
-app.get('/api/movies', (req, res) => {
-    const movies = [
-        {
-          "Title": "Avengers: Infinity War (server)",
-          "Year": "2018",
-          "imdbID": "tt4154756",
-          "Type": "movie",
-          "Poster": "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
-        },
-        {
-          "Title": "Captain America: Civil War (server)",
-          "Year": "2016",
-          "imdbID": "tt3498820",
-          "Type": "movie",
-          "Poster": "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
-        },
-        {
-          "Title": "World War Z (server)",
-          "Year": "2013",
-          "imdbID": "tt0816711",
-          "Type": "movie",
-          "Poster": "https://m.media-amazon.com/images/M/MV5BNDQ4YzFmNzktMmM5ZC00MDZjLTk1OTktNDE2ODE4YjM2MjJjXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"
-        }
-      ];
-    res.status(200).json({ movies }); // Send the movies array as JSON with a 200 status
+// POST route to add a new movie to the database
+app.post('/api/movies', async (req, res) => {
+  try {
+    const { title, year, poster } = req.body; // Extract data from the request body
+    const newMovie = new Movie({ title, year, poster }); // Create a new Movie instance
+    await newMovie.save(); // Save the movie to the database
+    res.status(201).json({ message: 'Movie created successfully', movie: newMovie }); // Send a success response
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating movie', error }); // Handle errors
+  }
 });
 
-
-app.post('/api/movies', (req, res) => {
-    console.log(req.body.title); // Log the title from the request body to the console
-    res.send("Movie Added!"); // Send a response indicating the movie was added
+// GET route to retrieve all movies from the database
+app.get('/api/movies', async (req, res) => {
+  try {
+    const movies = await Movie.find({}); // Retrieve all movies
+    res.status(200).json(movies); // Send the movies as JSON
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching movies', error }); // Handle errors
+  }
 });
 
+// GET route to retrieve a movie by its ID
+app.get('/api/movie/:id', async (req, res) => {
+  try {
+    const movie = await Movie.findById(req.params.id); // Retrieve a movie by its ID
+    if (movie) {
+      res.status(200).json(movie); // Send the movie as JSON
+    } else {
+      res.status(404).json({ message: 'Movie not found' }); // Handle movie not found
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching movie', error }); // Handle errors
+  }
+});
 
+// Start the server and listen on the specified port
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`); // Log server startup information
+  console.log(`Server is running on http://localhost:${port}`); // Log server startup information
 });
