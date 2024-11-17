@@ -1,55 +1,59 @@
-import axios from "axios";
-import { useState } from "react";
+import axios from "axios"; // Importing axios for making HTTP requests
+import { useState } from "react"; // Importing useState hook for state management
 
 const Create = () => {
 
-    const [title, setTitle] = useState('');
-    const [year, setYear] = useState('');
-    const [poster, setPoster] = useState('');
+    // State variables for storing input values
+    const [title, setTitle] = useState(''); // Title of the movie
+    const [year, setYear] = useState(''); // Year of the movie
+    const [poster, setPoster] = useState(''); // URL for the movie poster
 
+    // Function to handle form submission
     const handleSubmit = (e) => {
-        e.preventDefault();
-        const movie = {title,year,poster};
-        console.log(movie);
+        e.preventDefault(); // Prevent default form submission behavior
+        const movie = { title, year, poster }; // Create a movie object with form data
+        console.log(movie); // Log the movie object to the console for debugging
 
-        axios.post('http://localhost:4000/api/movies',movie)
-        .then((res)=>{console.log(res.data)})
-        .catch();
+        // Make a POST request to the server to add the movie
+        axios.post('http://localhost:4000/api/movies', movie)
+        .then((res) => { console.log(res.data); }) // Log the response data from the server
+        .catch(); // Catch and handle any errors (consider adding error handling here)
     }
 
     return (
         <div>
             <h3>Hello from create component!</h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}> {/* Attach the handleSubmit function to the form */}
                 <div className="form-group">
                     <label>Add Movie Title: </label>
                     <input type="text"
-                        className="form-control"
-                        value={title}
-                        onChange={(e) => { setTitle(e.target.value) }}
+                        className="form-control" // Bootstrap class for styling
+                        value={title} // Bind the input value to the title state
+                        onChange={(e) => { setTitle(e.target.value); }} // Update title state on change
                     />
                 </div>
                 <div className="form-group">
                     <label>Add Movie Year: </label>
                     <input type="text"
-                        className="form-control"
-                        value={year}
-                        onChange={(e) => { setYear(e.target.value) }}
+                        className="form-control" // Bootstrap class for styling
+                        value={year} // Bind the input value to the year state
+                        onChange={(e) => { setYear(e.target.value); }} // Update year state on change
                     />
                 </div>
                 <div className="form-group">
                     <label>Add Movie Poster: </label>
                     <input type="text"
-                        className="form-control"
-                        value={poster}
-                        onChange={(e) => { setPoster(e.target.value) }}
+                        className="form-control" // Bootstrap class for styling
+                        value={poster} // Bind the input value to the poster state
+                        onChange={(e) => { setPoster(e.target.value); }} // Update poster state on change
                     />
                 </div>
                 <div>
-                    <input type="submit" value="Add Movie"></input>
+                    <input type="submit" value="Add Movie" /> {/* Submit button for the form */}
                 </div>
             </form>
         </div>
     );
 }
-export default Create;
+
+export default Create; // Export the Create component for use in other parts of the app
